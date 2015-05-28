@@ -11,6 +11,8 @@
 
 namespace Axel;
 
+use mikehaertl\shellcommand\Command;
+
 class AxelDownload {
 
     private $axel_path;
@@ -19,8 +21,9 @@ class AxelDownload {
     private $filename;
     private $download_path;
     public  $error;
+    public  $last_message;
+    public  $last_command   = AxelDownload::Created;
 
-    private $last_command   = AxelDownload::Created;
     private $status         = [
         'percentage'        => 0,
         'speed'             => 0,
@@ -33,17 +36,28 @@ class AxelDownload {
     const Cancelled = 3;
     const Completed = 4;
     const Cleared = 5;
-    
-    public function __construct($axel_path, $address, $filename = null, $download_path = null) {
 
-        $this->axel_path        = $axel_path;
+    public function __construct($address, $axel_path = '/usr/local/bin/axel', $filename = null, $download_path = null) {
+
         $this->address          = $address;
+        $this->axel_path        = (is_string($axel_path) && !empty($axel_path)) ? $axel_path : '/usr/local/bin/axel';
         $this->filename         = (is_string($filename) && !empty($filename)) ? $filename : null;
         $this->download_path    = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
     }
 
     public function start() {
         $this->pid = 1;
+
+        //$command = new Command('/usr/local/bin/mycommand -a -b');
+        $command = new Command('ls');
+
+        if ($command->execute()) {
+            $this->last_message = $command->getOutput();
+        }
+        else {
+            $this->error        =  $command->getError();
+            $this->last_message = $this->error;
+        }
 
         $this->last_command = AxelDownload::Started;
     }

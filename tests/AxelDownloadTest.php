@@ -18,4 +18,15 @@ class AxelDownloadTest extends \TestFixture {
         //$axel = new AxelDownload();
         //$this->assertSame($axel->outputString(), 'test');
     }
+
+    public function testStartDownload() {
+
+        $axel = new AxelDownload('http://www.google.com');
+
+        $axel->start();
+
+        $this->assertSame($axel->last_command, AxelDownload::Started);
+
+        $this->log($axel, 'Download object');
+    }
 }
