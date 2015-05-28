@@ -37,10 +37,10 @@ class AxelDownload {
     const Completed = 4;
     const Cleared = 5;
 
-    public function __construct($address, $axel_path = '/usr/local/bin/axel', $filename = null, $download_path = null) {
+    public function __construct($address, $axel_path = '/usr/bin/axel', $filename = null, $download_path = null) {
 
         $this->address          = $address;
-        $this->axel_path        = (is_string($axel_path) && !empty($axel_path)) ? $axel_path : '/usr/local/bin/axel';
+        $this->axel_path        = (is_string($axel_path) && !empty($axel_path)) ? $axel_path : '/usr/bin/axel';
         $this->filename         = (is_string($filename) && !empty($filename)) ? $filename : null;
         $this->download_path    = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
     }
@@ -48,11 +48,13 @@ class AxelDownload {
     public function start() {
         $this->pid = 1;
 
-        //$command = new Command('/usr/local/bin/mycommand -a -b');
-        $command = new Command('ls');
+        $start_time = time();
+
+        $command = new Command($this->axel_path . ' -avn 10 ' . $this->address . ' > ' . $start_time . '.log 2>&1 &');
 
         if ($command->execute()) {
             $this->last_message = $command->getOutput();
+
         }
         else {
             $this->error        =  $command->getError();
