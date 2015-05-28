@@ -1,6 +1,7 @@
+[![Codeship Status for ianoshorty/axel-php](https://codeship.com/projects/a0f58ef0-e7b1-0132-651b-4e340869c11f/status?branch=master)](https://codeship.com/projects/82613)
+[![Code Climate](https://codeclimate.com/github/ianoshorty/axel-php/badges/gpa.svg)](https://codeclimate.com/github/ianoshorty/axel-php)
 
 # AXEL PHP - Axel Download Functionality For PHP
-
 
 ##### General
 
@@ -15,7 +16,7 @@
 In order to install RPVR you will need:
 
  - [LAMP] - A full Lamp stack
- - [Axel] 	- A linux server with Axel installed
+ - [Axel] - A linux server with Axel installed
 
 ### Installation
 
