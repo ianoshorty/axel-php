@@ -22,7 +22,7 @@ class Axel {
     public function __construct($concurrent = 1, $path_to_axel = null, $arguments = array()) {
 
         $this->concurrent   = (is_numeric($concurrent) && $concurrent >= 0)? $concurrent : 1;
-        $this->path_to_axel = (is_string($path_to_axel))? $path_to_axel : '/usr/local/bin/axel';
+        $this->path_to_axel = (is_string($path_to_axel))? $path_to_axel : null;
         $this->arguments    = (is_array($arguments)) ? $arguments : array();
     }
 
