@@ -11,11 +11,12 @@
 
 namespace Axel;
 
-class AxelDownloadTest extends \TestFixture {
+class AxelTest extends \TestFixture {
 
     public function testOutputString() {
-
-        //$axel = new AxelDownload();
-        //$this->assertSame($axel->outputString(), 'test');
+        $axel = new Axel();
+        $this->assertSame($axel->outputString(), 'test');
     }
+
+
 }
