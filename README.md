@@ -1,16 +1,23 @@
+# AXEL PHP - Axel Download Functionality For PHP
+
 [![Codeship Status for ianoshorty/axel-php](https://codeship.com/projects/a0f58ef0-e7b1-0132-651b-4e340869c11f/status?branch=master)](https://codeship.com/projects/82613)
 [![Code Climate](https://codeclimate.com/github/ianoshorty/axel-php/badges/gpa.svg)](https://codeclimate.com/github/ianoshorty/axel-php)
 
-# AXEL PHP - Axel Download Functionality For PHP
-
-##### General
+## General
 
   - Download, pause and cancel files.
+
+## Usage
+
+// Usage instructions here
 
 ### Version
 0.0.1
 
 ---
+
+## Installation
+
 ### Prerequesites
 
 In order to install RPVR you will need:
@@ -18,16 +25,14 @@ In order to install RPVR you will need:
  - [LAMP] - A full Lamp stack
  - [Axel] - A linux server with Axel installed
 
-### Installation
-
-// Install Instructions
+### Install Instructions
 
 ```sh
 $ shell commmand here
 ```
 
 ---
-### Development
+## Development
 
 Want to contribute? Great! Feel free to get in touch with me and we can collaborate, or fork / pull as you like.
 
@@ -36,7 +41,7 @@ Want to contribute? Great! Feel free to get in touch with me and we can collabor
 // Add TODOs
 
 ---
-### License
+## License
 The MIT License (MIT)
 
 Copyright (c) 2015 Ian Outterside ([Ian Builds Apps]).
