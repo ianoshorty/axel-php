@@ -325,15 +325,6 @@ class AxelDownload {
     }
 
     /**
-     * The download address
-     *
-     * @return mixed
-     */
-    public function getAddress() {
-        return $this->address;
-    }
-
-    /**
      * The filename used
      *
      * @return string
@@ -347,7 +338,7 @@ class AxelDownload {
      *
      * @return null|string
      */
-    public function getDownloadPath() {
+    private function getDownloadPath() {
         return $this->download_path;
     }
 
