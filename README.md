@@ -1,18 +1,58 @@
-# AXEL PHP - Axel Download Functionality For PHP
+# AXEL PHP - Axel Accelerated Download Functionality For PHP
 
 [![Codeship Status for ianoshorty/axel-php](https://codeship.com/projects/a0f58ef0-e7b1-0132-651b-4e340869c11f/status?branch=master)](https://codeship.com/projects/82613)
 [![Code Climate](https://codeclimate.com/github/ianoshorty/axel-php/badges/gpa.svg)](https://codeclimate.com/github/ianoshorty/axel-php)
 
 ## General
 
-  - Download, pause and cancel files.
+The Axel PHP library wraps around the C based [Axel] library. [Axel] performs accelerated downloads from the command line, similar to `wget`.
 
-## Usage
+Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below for usage.
 
-// Usage instructions here
+** _PLEASE NOTE_: This library is under active development and is subject to change at any time. **
+
+## Example Usage
+
+### Sync Download With Complete Callback
+
+```php
+
+$axel = new AxelDownload($download_address);
+$axel->start(function($axel, $status, $success, $error) use ($download_address) {
+    echo 'File Downloaded';
+    print_r($status);
+});
+
+```
+
+### Start Async Download
+
+```php
+
+$axel = new AxelDownload('http://ipv4.download.thinkbroadband.com/1GB.zip', 'test.zip', '~/', null, true);
+$axel->start();
+
+```
+
+```php
+
+### Get Download Status
+
+```php
+$status = $axel->updateStatus();
+```
+
+### Cleanup
+
+```php
+$axel->clearCompleted()
+```
+
+### Axel Managed Download Queue
+// TODO
 
 ### Version
-0.0.1
+0.0.2
 
 ---
 
@@ -27,18 +67,31 @@ In order to install RPVR you will need:
 
 ### Install Instructions
 
-```sh
-$ shell commmand here
-```
+**INSTALL VIA DOWNLOAD ONLY - PACKAGIST SUBMISSION COMING SOON**
+
+#### Manual Install
+To manually install the package:
+1. `$ sudo apt-get install axel`
+2. Clone or download the repo
+3. // Add instructions
+
+#### Packagist
+**INSTALL VIA DOWNLOAD ONLY - PACKAGIST SUBMISSION COMING SOON**
+1. `$ sudo apt-get install axel`
+2. $ composer install axel-php
+3. // Add instructions
 
 ---
 ## Development
 
 Want to contribute? Great! Feel free to get in touch with me and we can collaborate, or fork / pull as you like.
 
-### Todo's
+### TODO
 
-// Add TODOs
+-- Full implement callback closure for any time a progress update is made
+-- Manage downloads in a queue (Axel)
+-- Add to packagist
+-- Document
 
 ---
 ## License
