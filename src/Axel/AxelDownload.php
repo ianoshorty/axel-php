@@ -147,6 +147,7 @@ class AxelDownload {
 
         if ($this->last_command == AxelDownload::Completed) {
 
+            unlink($this->getLogPath());
             $this->last_command = AxelDownload::Cleared;
 
             return true;
@@ -175,26 +176,15 @@ class AxelDownload {
                 $this->status['percentage'] = $matches[1];
                 $this->status['speed']      = $matches[2];
                 $this->status['ttl']        = $matches[3];
-
-                if (file_exists($this->getFullPath() . '.st')) {
-                    return false;
-                }
-                else if ($this->status['percentage'] == 100) {
-                    return true;
-                }
-            }
-            else {
-
-                $this->error = 'Unable to read log file.';
-                return false;
             }
         }
 
-        if ($this->last_command == AxelDownload::Cleared) {
+        if (file_exists($this->getFullPath() . '.st')) {
+            return false;
+        }
+        else {
             return true;
         }
-
-        return false;
     }
 
     public function updateStatus() {
