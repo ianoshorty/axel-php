@@ -163,7 +163,7 @@ class AxelDownload {
                 $this->updateStatus();
 
                 foreach((array) $this->callbacks as $callback) {
-                    $callback($this, true);
+                    $callback($this, $this->status, true);
                 }
             }
         }
@@ -171,7 +171,7 @@ class AxelDownload {
             if (!$this->detach) {
 
                 foreach((array) $this->callbacks as $callback) {
-                    $callback($this, false, $this->error);
+                    $callback($this, $this->status, false, $this->error);
                 }
             }
         }
