@@ -69,15 +69,17 @@ In order to install RPVR you will need:
 
 #### Manual Install
 To manually install the package:
-1. `$ sudo apt-get install axel`
-2. Clone or download the repo
-3. // Add instructions
+
+  1. `$ sudo apt-get install axel`
+  2. Clone or download the repo
+  3. // Add instructions
 
 #### Packagist
 **INSTALL VIA DOWNLOAD ONLY - PACKAGIST SUBMISSION COMING SOON**
-1. `$ sudo apt-get install axel`
-2. $ composer install axel-php
-3. // Add instructions
+
+  1. `$ sudo apt-get install axel`
+  2. $ composer install axel-php
+  3. // Add instructions
 
 ---
 ## Development
