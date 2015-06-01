@@ -17,6 +17,4 @@ class AxelTest extends \TestFixture {
         $axel = new Axel();
         $this->assertSame($axel->outputString(), 'test');
     }
-
-
 }
