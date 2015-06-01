@@ -307,15 +307,6 @@ class AxelDownload {
     }
 
     /**
-     * The full path to Axel
-     *
-     * @return string
-     */
-    public function getAxelPath() {
-        return $this->axel_path;
-    }
-
-    /**
      * The process ID
      *
      * @return mixed
