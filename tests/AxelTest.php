@@ -1,6 +1,11 @@
 <?php
 
-/*
+/*************************************************************************
+ *
+ * AxelTest class runs PHPUnit tests of Axel
+ *
+ * =======================================================================
+ *
  * This file is part of the Axel package.
  *
  * (c) Ian Outterside <ian@ianbuildsapps.com>

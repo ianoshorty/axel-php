@@ -1,9 +1,14 @@
 <?php
 
-/*
+/*************************************************************************
+ *
+ * AxelDownload class represents a single AXEL download.
+ *
+ * =======================================================================
+ *
  * This file is part of the Axel package.
  *
- * (c) Ian Outterside <ian@ianbuildsapps.com>
+ * @author (c) Ian Outterside <ian@ianbuildsapps.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,6 +20,9 @@ use Symfony\Component\Process\Process;
 
 class AxelDownload {
 
+    /**
+     * @var string
+     */
     private $axel_path;
     private $address;
     private $filename;

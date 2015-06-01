@@ -1,6 +1,11 @@
 <?php
 
-/*
+/*************************************************************************
+ *
+ * Axel class represents a managed collection of AXEL downloads.
+ *
+ * =======================================================================
+ *
  * This file is part of the Axel package.
  *
  * (c) Ian Outterside <ian@ianbuildsapps.com>

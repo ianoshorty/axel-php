@@ -1,6 +1,11 @@
 <?php
 
-/*
+/*************************************************************************
+ *
+ * TestFixture class sets up a TestFixture for PHPUnit tests to extend.
+ *
+ * =======================================================================
+ *
  * This file is part of the Axel package.
  *
  * (c) Ian Outterside <ian@ianbuildsapps.com>
