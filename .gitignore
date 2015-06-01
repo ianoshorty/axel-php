@@ -6,3 +6,5 @@ composer.lock
 .DS_Store
 *.sublime-project
 *.sublime-workspace
+*.log
+*.st
