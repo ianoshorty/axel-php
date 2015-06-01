@@ -23,12 +23,12 @@ class AxelDownload {
     /**
      * Enums for download states
      */
-    const Created = 0;
-    const Started = 1;
-    const Paused = 2;
-    const Cancelled = 3;
-    const Completed = 4;
-    const Cleared = 5;
+    const CREATED = 0;
+    const STARTED = 1;
+    const PAUSED = 2;
+    const CANCELLED = 3;
+    const COMPLETED = 4;
+    const CLEARED = 5;
 
     /**
      * @var string Full path to Axel binary
@@ -84,9 +84,9 @@ class AxelDownload {
     public  $error;
 
     /**
-     * @var int Const value of the last download state. Starts with Created:0
+     * @var int Const value of the last download state. Starts with CREATED:0
      */
-    public  $last_command   = AxelDownload::Created;
+    public  $last_command   = AxelDownload::CREATED;
 
     /**
      * @var array Download progress information
@@ -154,7 +154,7 @@ class AxelDownload {
         $command = $this->axel_path;                                            // Path to Axel downloader
         $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->getLogPath()}";
 
-        $this->last_command = AxelDownload::Started;
+        $this->last_command = AxelDownload::STARTED;
 
         if ($this->execute($command, $options_string)) {
 
@@ -199,7 +199,7 @@ class AxelDownload {
                 $this->process_info = null;
                 // Remove the log file
                 unlink($this->getLogPath());
-                $this->last_command = AxelDownload::Paused;
+                $this->last_command = AxelDownload::PAUSED;
             }
         }
         else {
@@ -218,7 +218,7 @@ class AxelDownload {
 
         $this->pause();
 
-        if ($this->last_command == AxelDownload::Paused) {
+        if ($this->last_command == AxelDownload::PAUSED) {
 
             // Do file removal
 
@@ -238,10 +238,10 @@ class AxelDownload {
      */
     public function clearCompleted() {
 
-        if ($this->last_command == AxelDownload::Completed) {
+        if ($this->last_command == AxelDownload::COMPLETED) {
 
             unlink($this->getLogPath());
-            $this->last_command = AxelDownload::Cleared;
+            $this->last_command = AxelDownload::CLEARED;
 
             return true;
         }
@@ -293,7 +293,7 @@ class AxelDownload {
     public function updateStatus() {
 
         if ($this->checkDownloadFile() === true) {
-            $this->last_command = AxelDownload::Completed;
+            $this->last_command = AxelDownload::COMPLETED;
         }
 
         return $this->getStatus();
@@ -304,33 +304,6 @@ class AxelDownload {
      */
     public function getStatus() {
         return $this->status;
-    }
-
-    /**
-     * The full path to Axel
-     *
-     * @return string
-     */
-    public function getAxelPath() {
-        return $this->axel_path;
-    }
-
-    /**
-     * The process ID
-     *
-     * @return mixed
-     */
-    public function getPID() {
-        return (isset($this->process_info['pid']))?$this->process_info['pid']:null;
-    }
-
-    /**
-     * The download address
-     *
-     * @return mixed
-     */
-    public function getAddress() {
-        return $this->address;
     }
 
     /**
@@ -347,7 +320,7 @@ class AxelDownload {
      *
      * @return null|string
      */
-    public function getDownloadPath() {
+    private function getDownloadPath() {
         return $this->download_path;
     }
 

@@ -16,22 +16,18 @@ Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below 
 ### Sync Download With Complete Callback
 
 ```php
-
 $axel = new AxelDownload($download_address);
 $axel->start(function($axel, $status, $success, $error) use ($download_address) {
     echo 'File Downloaded';
     print_r($status);
 });
-
 ```
 
 ### Start Async Download
 
 ```php
-
 $axel = new AxelDownload('http://ipv4.download.thinkbroadband.com/1GB.zip', 'test.zip', '~/', null, true);
 $axel->start();
-
 ```
 
 ### Get Download Status
@@ -69,15 +65,17 @@ In order to install RPVR you will need:
 
 #### Manual Install
 To manually install the package:
-1. `$ sudo apt-get install axel`
-2. Clone or download the repo
-3. // Add instructions
+
+  1. `$ sudo apt-get install axel`
+  2. Clone or download the repo
+  3. // Add instructions
 
 #### Packagist
 **INSTALL VIA DOWNLOAD ONLY - PACKAGIST SUBMISSION COMING SOON**
-1. `$ sudo apt-get install axel`
-2. $ composer install axel-php
-3. // Add instructions
+
+  1. `$ sudo apt-get install axel`
+  2. $ composer install axel-php
+  3. // Add instructions
 
 ---
 ## Development
