@@ -307,15 +307,6 @@ class AxelDownload {
     }
 
     /**
-     * The process ID
-     *
-     * @return mixed
-     */
-    public function getPID() {
-        return (isset($this->process_info['pid']))?$this->process_info['pid']:null;
-    }
-
-    /**
      * The filename used
      *
      * @return string
