@@ -52,6 +52,21 @@ class AxelDownload {
         $this->connections          = (is_int($connections) && $connections >= 1)           ? $connections : 10;
     }
 
+    public function checkAxelInstalled() {
+        $process = new Process($this->axel_path . ' --version');
+
+        $process->run();
+        if (!$process->isSuccessful()) {
+            $this->error = $process->getErrorOutput();
+
+            return false;
+        }
+        else {
+
+            return true;
+        }
+    }
+
     public function start(\Closure $callback = null) {
 
         if (is_callable($callback)) $this->callbacks[] = $callback;

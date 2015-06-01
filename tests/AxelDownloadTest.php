@@ -15,6 +15,20 @@ class AxelDownloadTest extends \TestFixture {
 
     protected $short_download_address   = 'http://www.google.com';
 
+    public function testAxelInstalled() {
+
+        $download_address = $this->long_download_address;
+
+        // Instance
+        $this->assertFileNotExists(basename($download_address));
+        $axel = new AxelDownload($download_address, null, null, null, true);
+
+        $this->assertTrue($axel->checkAxelInstalled());
+    }
+
+    /**
+     * @depends testAxelInstalled
+     */
     public function testStartDownloadAsync() {
 
         $download_address = $this->long_download_address;
