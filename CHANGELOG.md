@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.3: June 1st, 2015
+- Minor refactoring
+
 ### 0.0.2: June 1st, 2015
 - Initial Axel Download files working.
 
