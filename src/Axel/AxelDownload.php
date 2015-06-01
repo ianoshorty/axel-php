@@ -21,27 +21,8 @@ use Symfony\Component\Process\Process;
 class AxelDownload {
 
     /**
-     * @var string
+     * Enums for download states
      */
-    private $axel_path;
-    private $address;
-    private $filename;
-    private $download_path;
-    private $callbacks      = [];
-    private $detach         = false;
-    private $connections    = 10;
-    private $log_path;
-    private $process_info;
-
-    public  $error;
-    public  $last_command   = AxelDownload::Created;
-
-    private $status         = [
-        'percentage'        => 0,
-        'speed'             => '0.0KB/s',
-        'ttl'               => 0
-    ];
-
     const Created = 0;
     const Started = 1;
     const Paused = 2;
@@ -49,6 +30,84 @@ class AxelDownload {
     const Completed = 4;
     const Cleared = 5;
 
+    /**
+     * @var string Full path to Axel binary
+     * @example '/usr/bin/axel'
+     */
+    private $axel_path;
+
+    /**
+     * @var string File to download
+     * @example 'http://www.google.com' or 'http://ipv4.download.thinkbroadband.com/1GB.zip'
+     */
+    private $address;
+
+    /**
+     * @var null|string Filename to save the downloaded file with
+     */
+    private $filename;
+
+    /**
+     * @var null|string Path to save the downloaded file at
+     */
+    private $download_path;
+
+    /**
+     * @var array Internal array of callback functions to call on completed download
+     */
+    private $callbacks      = [];
+
+    /**
+     * @var bool To perform Async downloads set to true
+     */
+    private $detach         = false;
+
+    /**
+     * @var int The number of connections to attempt to use to download the file
+     */
+    private $connections    = 10;
+
+    /**
+     * @var string The path to the log file that is parsed to get progress information
+     */
+    private $log_path;
+
+    /**
+     * @var array Array containing process information if the process is running.
+     * @example May contain ['pid' => 1234]
+     */
+    private $process_info;
+
+    /**
+     * @var string The last error encountered
+     */
+    public  $error;
+
+    /**
+     * @var int Const value of the last download state. Starts with Created:0
+     */
+    public  $last_command   = AxelDownload::Created;
+
+    /**
+     * @var array Download progress information
+     */
+    private $status         = [
+        'percentage'        => 0,
+        'speed'             => '0.0KB/s',
+        'ttl'               => 0
+    ];
+
+    /**
+     * Class constructor
+     *
+     * @param string $address File to download
+     * @param string $filename Filename to save the downloaded file with
+     * @param null $download_path Path to save the downloaded file at
+     * @param callable $callback A callback function to call with progress information
+     * @param bool $detach To perform Async downloads set to true
+     * @param string $axel_path Full path to Axel binary
+     * @param int $connections The number of connections to attempt to use to download the file
+     */
     public function __construct($address, $filename = null, $download_path = null, \Closure $callback = null, $detach = false, $axel_path = '/usr/bin/axel', $connections = 10) {
 
         $this->address              = $address;
@@ -60,6 +119,11 @@ class AxelDownload {
         $this->connections          = (is_int($connections) && $connections >= 1)           ? $connections : 10;
     }
 
+    /**
+     * Check if the specified Axel binary is installed / callable
+     *
+     * @return bool Whether Axel is installed
+     */
     public function checkAxelInstalled() {
         $process = new Process($this->axel_path . ' --version');
 
@@ -75,6 +139,12 @@ class AxelDownload {
         }
     }
 
+    /**
+     * Start the download process
+     *
+     * @param callable $callback An optional callback to provide progress updates
+     * @return $this
+     */
     public function start(\Closure $callback = null) {
 
         if (is_callable($callback)) $this->callbacks[] = $callback;
@@ -109,6 +179,11 @@ class AxelDownload {
         return $this;
     }
 
+    /**
+     * Pause the download
+     *
+     * @return $this
+     */
     public function pause() {
 
         if (isset($this->process_info['pid'])) {
@@ -134,6 +209,11 @@ class AxelDownload {
         return $this;
     }
 
+    /**
+     * Cancel the download
+     *
+     * @return $this
+     */
     public function cancel() {
 
         $this->pause();
@@ -151,6 +231,11 @@ class AxelDownload {
         return $this;
     }
 
+    /**
+     * Perform some cleanup.
+     *
+     * @return bool If cleanup was successful
+     */
     public function clearCompleted() {
 
         if ($this->last_command == AxelDownload::Completed) {
@@ -167,6 +252,11 @@ class AxelDownload {
         }
     }
 
+    /**
+     * Parse the download log to get progress updates
+     *
+     * @return bool If the download has completed
+     */
     protected function checkDownloadFile() {
 
         if (file_exists($this->getLogPath())) {
@@ -195,6 +285,11 @@ class AxelDownload {
         }
     }
 
+    /**
+     * Force a status update.
+     *
+     * @return array Updated progress status
+     */
     public function updateStatus() {
 
         if ($this->checkDownloadFile() === true) {
@@ -204,11 +299,16 @@ class AxelDownload {
         return $this->getStatus();
     }
 
+    /**
+     * @return array Last progress status
+     */
     public function getStatus() {
         return $this->status;
     }
 
     /**
+     * The full path to Axel
+     *
      * @return string
      */
     public function getAxelPath() {
@@ -216,6 +316,8 @@ class AxelDownload {
     }
 
     /**
+     * The process ID
+     *
      * @return mixed
      */
     public function getPID() {
@@ -223,6 +325,8 @@ class AxelDownload {
     }
 
     /**
+     * The download address
+     *
      * @return mixed
      */
     public function getAddress() {
@@ -230,6 +334,8 @@ class AxelDownload {
     }
 
     /**
+     * The filename used
+     *
      * @return string
      */
     public function getFilename() {
@@ -237,6 +343,8 @@ class AxelDownload {
     }
 
     /**
+     * The path to the download location
+     *
      * @return null|string
      */
     public function getDownloadPath() {
@@ -244,6 +352,8 @@ class AxelDownload {
     }
 
     /**
+     * The full path to the download file
+     *
      * @return string
      */
     public function getFullPath() {
@@ -251,13 +361,22 @@ class AxelDownload {
     }
 
     /**
+     * The full path to the log file
+     *
      * @return string
      */
     public function getLogPath() {
         return $this->log_path;
     }
 
-    public function execute($command, $command_args) {
+    /**
+     * Executes the download
+     *
+     * @param $command The download command
+     * @param $command_args Optional arguments
+     * @return bool If the command executed successfully
+     */
+    protected function execute($command, $command_args) {
 
         $detach = ($this->detach) ? ' 2>&1 &': '';
 
