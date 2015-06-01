@@ -4,3 +4,5 @@
 /.idea
 composer.lock
 .DS_Store
+*.sublime-project
+*.sublime-workspace
