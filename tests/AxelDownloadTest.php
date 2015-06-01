@@ -48,7 +48,7 @@ class AxelDownloadTest extends \TestFixture {
         sleep(10);
 
         // Tests
-        $this->assertSame($axel->last_command, AxelDownload::Started);
+        $this->assertSame($axel->last_command, AxelDownload::STARTED);
 
         return $axel;
     }
@@ -100,11 +100,11 @@ class AxelDownloadTest extends \TestFixture {
         // Instance
         $this->assertFileNotExists(basename($download_address));
         $axel = new AxelDownload($download_address);
-        $this->assertSame($axel->last_command, AxelDownload::Created);
+        $this->assertSame($axel->last_command, AxelDownload::CREATED);
         $axel->start();
 
         // Tests
-        $this->assertSame($axel->last_command, AxelDownload::Completed);
+        $this->assertSame($axel->last_command, AxelDownload::COMPLETED);
         $this->assertFileExists($axel->getFullPath());
         $contents = file_get_contents($axel->getFullPath());
         $this->assertContains('input', $contents);
@@ -127,7 +127,7 @@ class AxelDownloadTest extends \TestFixture {
         $axel->start(function($axel, $success, $error) use ($download_address) {
             // Tests
             $this->assertTrue($success);
-            $this->assertSame($axel->last_command, AxelDownload::Started);
+            $this->assertSame($axel->last_command, AxelDownload::STARTED);
             $this->assertFileExists(basename($download_address));
             $contents = file_get_contents(basename($download_address));
             $this->assertContains('input', $contents);
