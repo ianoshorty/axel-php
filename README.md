@@ -34,8 +34,6 @@ $axel->start();
 
 ```
 
-```php
-
 ### Get Download Status
 
 ```php
