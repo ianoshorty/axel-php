@@ -14,6 +14,7 @@ namespace Axel;
 class AxelDownloadTest extends \TestFixture {
 
     protected $short_download_address   = 'http://www.google.com';
+    protected $long_download_address    = 'http://ipv4.download.thinkbroadband.com/1GB.zip';
 
     public function testAxelInstalled() {
 
