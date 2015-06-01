@@ -1,18 +1,22 @@
-# AXEL PHP - Axel Download Functionality For PHP
+# AXEL PHP - Axel Accelerated Download Functionality For PHP
 
 [![Codeship Status for ianoshorty/axel-php](https://codeship.com/projects/a0f58ef0-e7b1-0132-651b-4e340869c11f/status?branch=master)](https://codeship.com/projects/82613)
 [![Code Climate](https://codeclimate.com/github/ianoshorty/axel-php/badges/gpa.svg)](https://codeclimate.com/github/ianoshorty/axel-php)
 
 ## General
 
-  - Download, pause and cancel files.
+The Axel PHP library wraps around the C based [Axel] library. [Axel] performs accelerated downloads from the command line, similar to `wget`.
+
+Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below for usage.
+
+** _PLEASE NOTE_: This library is under active development and is subject to change at any time. **
 
 ## Usage
 
 // Usage instructions here
 
 ### Version
-0.0.1
+0.0.2
 
 ---
 
@@ -27,8 +31,17 @@ In order to install RPVR you will need:
 
 ### Install Instructions
 
+**INSTALL VIA DOWNLOAD ONLY - PACKAGIST SUBMISSION COMING SOON**
+
+#### Manual Install
+To manually install the package:
+1. Clone or download the repo
+2. // Add instructions
+
+#### Packagist
+**INSTALL VIA DOWNLOAD ONLY - PACKAGIST SUBMISSION COMING SOON**
 ```sh
-$ shell commmand here
+$ composer install axel-php
 ```
 
 ---
