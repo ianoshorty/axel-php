@@ -100,21 +100,11 @@ class AxelDownload {
     /**
      * Class constructor
      *
-     * @param string $address File to download
-     * @param string $filename Filename to save the downloaded file with
-     * @param null $download_path Path to save the downloaded file at
-     * @param callable $callback A callback function to call with progress information
-     * @param bool $detach To perform Async downloads set to true
      * @param string $axel_path Full path to Axel binary
      * @param int $connections The number of connections to attempt to use to download the file
      */
-    public function __construct($address, $filename = null, $download_path = null, \Closure $callback = null, $detach = false, $axel_path = '/usr/bin/axel', $connections = 10) {
+    public function __construct($axel_path = '/usr/bin/axel', $connections = 10) {
 
-        $this->address              = $address;
-        $this->filename             = (is_string($filename) && !empty($filename))           ? $filename : basename($this->address);
-        $this->download_path        = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
-        $this->detach               = (is_bool($detach))                                    ? $detach : false;
-        if (is_callable($callback)) $this->callbacks[] = $callback;
         $this->axel_path            = (is_string($axel_path) && !empty($axel_path))         ? $axel_path : '/usr/bin/axel';
         $this->connections          = (is_int($connections) && $connections >= 1)           ? $connections : 10;
     }
@@ -140,13 +130,34 @@ class AxelDownload {
     }
 
     /**
-     * Start the download process
+     * Start the download process - async
      *
+     * @param string $address File to download
+     * @param string $filename Filename to save the downloaded file with
+     * @param null $download_path Path to save the downloaded file at
      * @param callable $callback An optional callback to provide progress updates
      * @return $this
      */
-    public function start(\Closure $callback = null) {
+    public function startAsync($address, $filename = null, $download_path = null, \Closure $callback = null) {
 
+        $this->detach = true;
+        return $this->start($address, $filename, $download_path, $callback);
+    }
+
+    /**
+     * Start the download process
+     *
+     * @param string $address File to download
+     * @param string $filename Filename to save the downloaded file with
+     * @param null $download_path Path to save the downloaded file at
+     * @param callable $callback An optional callback to provide progress updates
+     * @return $this
+     */
+    public function start($address, $filename = null, $download_path = null, \Closure $callback = null) {
+
+        $this->address              = $address;
+        $this->filename             = (is_string($filename) && !empty($filename))           ? $filename : basename($this->address);
+        $this->download_path        = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
         if (is_callable($callback)) $this->callbacks[] = $callback;
 
         $this->log_path = $this->download_path . time() . '.log';
