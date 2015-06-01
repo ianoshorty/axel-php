@@ -23,11 +23,8 @@ class AxelDownloadTest extends \TestFixture {
 
     public function testAxelInstalled() {
 
-        $download_address = $this->long_download_address;
-
         // Instance
-        $this->assertFileNotExists(basename($download_address));
-        $axel = new AxelDownload($download_address, null, null, null, true);
+        $axel = new AxelDownload();
 
         $this->assertTrue($axel->checkAxelInstalled());
     }
@@ -41,8 +38,8 @@ class AxelDownloadTest extends \TestFixture {
 
         // Instance
         $this->assertFileNotExists(basename($download_address));
-        $axel = new AxelDownload($download_address, null, null, null, true);
-        $axel->start();
+        $axel = new AxelDownload();
+        $axel->startAsync($download_address);
 
         // Wait for download to initialise
         sleep(10);
@@ -99,9 +96,9 @@ class AxelDownloadTest extends \TestFixture {
 
         // Instance
         $this->assertFileNotExists(basename($download_address));
-        $axel = new AxelDownload($download_address);
+        $axel = new AxelDownload();
         $this->assertSame($axel->last_command, AxelDownload::CREATED);
-        $axel->start();
+        $axel->start($download_address);
 
         // Tests
         $this->assertSame($axel->last_command, AxelDownload::COMPLETED);

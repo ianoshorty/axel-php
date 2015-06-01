@@ -16,8 +16,8 @@ Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below 
 ### Sync Download With Complete Callback
 
 ```php
-$axel = new AxelDownload($download_address);
-$axel->start(function($axel, $status, $success, $error) use ($download_address) {
+$axel = new AxelDownload();
+$axel->start($download_address, null, null, function($axel, $status, $success, $error) use ($download_address) {
     echo 'File Downloaded';
     print_r($status);
 });
@@ -26,8 +26,8 @@ $axel->start(function($axel, $status, $success, $error) use ($download_address) 
 ### Start Async Download
 
 ```php
-$axel = new AxelDownload('http://ipv4.download.thinkbroadband.com/1GB.zip', 'test.zip', '~/', null, true);
-$axel->start();
+$axel = new AxelDownload();
+$axel->startAsync('http://ipv4.download.thinkbroadband.com/1GB.zip', 'test.zip', '~/');
 ```
 
 ### Get Download Status
