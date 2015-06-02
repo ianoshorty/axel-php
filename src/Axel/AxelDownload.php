@@ -34,49 +34,49 @@ class AxelDownload {
      * @var string Full path to Axel binary
      * @example '/usr/bin/axel'
      */
-    private $axel_path;
+    protected $axel_path;
 
     /**
      * @var string File to download
      * @example 'http://www.google.com' or 'http://ipv4.download.thinkbroadband.com/1GB.zip'
      */
-    private $address;
+    protected $address;
 
     /**
      * @var null|string Filename to save the downloaded file with
      */
-    private $filename;
+    protected $filename;
 
     /**
      * @var null|string Path to save the downloaded file at
      */
-    private $download_path;
+    protected $download_path;
 
     /**
      * @var array Internal array of callback functions to call on completed download
      */
-    private $callbacks      = [];
+    protected $callbacks      = [];
 
     /**
      * @var bool To perform Async downloads set to true
      */
-    private $detach         = false;
+    protected $detach         = false;
 
     /**
      * @var int The number of connections to attempt to use to download the file
      */
-    private $connections    = 10;
+    protected $connections    = 10;
 
     /**
      * @var string The path to the log file that is parsed to get progress information
      */
-    private $log_path;
+    protected $log_path;
 
     /**
      * @var array Array containing process information if the process is running.
      * @example May contain ['pid' => 1234]
      */
-    private $process_info;
+    protected $process_info;
 
     /**
      * @var string The last error encountered
@@ -91,7 +91,7 @@ class AxelDownload {
     /**
      * @var array Download progress information
      */
-    private $status         = [
+    protected $status         = [
         'percentage'        => 0,
         'speed'             => '0.0KB/s',
         'ttl'               => 0
