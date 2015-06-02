@@ -52,4 +52,8 @@ class TestFixture extends \PHPUnit_Framework_TestCase
             fwrite(STDERR, '========================' . "\n\n");
         }
     }
+
+    protected function setTimeout($time) {
+        sleep($time);
+    }
 }
