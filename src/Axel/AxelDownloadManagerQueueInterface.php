@@ -19,7 +19,21 @@ namespace Axel;
 
 interface AxelDownloadManagerQueueInterface {
 
+    /**
+     * Allows Queues to keep a reference of the download manager to call back to when a download has completed.
+     *
+     * @param AxelDownloadManager $axelDownloadManager The download manager object to reference
+     * @return void
+     */
     public function setDownloadManager(AxelDownloadManager $axelDownloadManager);
+
+    /**
+     * An opportunity for the queue to handle the download as it sees fit.
+     * This could be to download the file immediately, to schedule it on a background thread, or some other task.
+     *
+     * @param AxelDownload $download The download to process
+     * @return void
+     */
     public function addDownloadToQueue(AxelDownload $download);
 
 }

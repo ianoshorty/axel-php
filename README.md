@@ -124,6 +124,7 @@ Want to contribute? Great! Feel free to get in touch with me and we can collabor
   - Intelligently deal with both concurrent connections and concurrent downloads
   - Check write permissions in download directory
   - Pause queue (Maybe subclass?)
+  - Test queue Async
 
 ---
 ## License
