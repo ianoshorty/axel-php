@@ -16,10 +16,10 @@
 
 namespace Axel;
 
-class AxelTest extends \TestFixture {
+class AxelDownloadManagerTest extends \TestFixture {
 
     public function testOutputString() {
-        $axel = new Axel();
+        $axel = new AxelDownloadManager();
         $this->assertSame($axel->outputString(), 'test');
     }
 }

@@ -34,49 +34,49 @@ class AxelDownload {
      * @var string Full path to Axel binary
      * @example '/usr/bin/axel'
      */
-    private $axel_path;
+    protected $axel_path;
 
     /**
      * @var string File to download
      * @example 'http://www.google.com' or 'http://ipv4.download.thinkbroadband.com/1GB.zip'
      */
-    private $address;
+    protected $address;
 
     /**
      * @var null|string Filename to save the downloaded file with
      */
-    private $filename;
+    protected $filename;
 
     /**
      * @var null|string Path to save the downloaded file at
      */
-    private $download_path;
+    protected $download_path;
 
     /**
      * @var array Internal array of callback functions to call on completed download
      */
-    private $callbacks      = [];
+    protected $callbacks      = [];
 
     /**
      * @var bool To perform Async downloads set to true
      */
-    private $detach         = false;
+    protected $detach         = false;
 
     /**
      * @var int The number of connections to attempt to use to download the file
      */
-    private $connections    = 10;
+    protected $connections    = 10;
 
     /**
      * @var string The path to the log file that is parsed to get progress information
      */
-    private $log_path;
+    public $log_path;
 
     /**
      * @var array Array containing process information if the process is running.
      * @example May contain ['pid' => 1234]
      */
-    private $process_info;
+    protected $process_info;
 
     /**
      * @var string The last error encountered
@@ -91,7 +91,7 @@ class AxelDownload {
     /**
      * @var array Download progress information
      */
-    private $status         = [
+    protected $status         = [
         'percentage'        => 0,
         'speed'             => '0.0KB/s',
         'ttl'               => 0
@@ -130,40 +130,65 @@ class AxelDownload {
     }
 
     /**
-     * Start the download process - async
+     * Setup download Parameters
      *
-     * @param string $address File to download
-     * @param string $filename Filename to save the downloaded file with
-     * @param null $download_path Path to save the downloaded file at
-     * @param callable $callback An optional callback to provide progress updates
+     * @param array $options An array containing options to set on the download
      * @return $this
      */
-    public function startAsync($address, $filename = null, $download_path = null, \Closure $callback = null) {
+    public function addDownloadParameters($options) {
 
-        $this->detach = true;
-        return $this->start($address, $filename, $download_path, $callback);
+        if (!is_array($options)) {
+            return $this;
+        }
+
+        if (isset($options['address']) && is_string($options['address'])) {
+            $this->address              = $options['address'];
+        }
+
+        if (isset($options['filename']) && is_string($options['filename']) && !empty($options['filename'])) {
+            $this->filename = $options['filename'];
+        }
+
+        if (isset($options['download_path']) && is_string($options['download_path']) && !empty($options['download_path'])) {
+            $this->download_path = $options['download_path'];
+        }
+
+        if (isset($options['callback']) && is_callable($options['callback'])) {
+            $this->callbacks[] = $options['callback'];
+        }
+
+        return $this;
     }
 
     /**
      * Start the download process
      *
-     * @param string $address File to download
-     * @param string $filename Filename to save the downloaded file with
-     * @param null $download_path Path to save the downloaded file at
+     * @param null|string $address File to download
+     * @param null|string $filename Filename to save the downloaded file with
+     * @param null|string $download_path Path to save the downloaded file at
      * @param callable $callback An optional callback to provide progress updates
      * @return $this
      */
-    public function start($address, $filename = null, $download_path = null, \Closure $callback = null) {
+    public function start($address = null, $filename = null, $download_path = null, \Closure $callback = null) {
 
-        $this->address              = $address;
-        $this->filename             = (is_string($filename) && !empty($filename))           ? $filename : basename($this->address);
-        $this->download_path        = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
-        if (is_callable($callback)) $this->callbacks[] = $callback;
+        $this->addDownloadParameters([
+            'address'       => $address,
+            'filename'      => $filename,
+            'download_path' => $download_path,
+            'callback'      => $callback
+        ]);
 
-        $this->log_path = $this->download_path . time() . '.log';
+        if (!isset($this->address)) {
+            $this->error = 'Unable to download. Download address not specified.';
+            return $this;
+        }
+
+        if (!isset($this->filename)) $this->filename = basename($this->address);
+
+        if (!isset($this->log_path) || empty($this->log_path) || !is_string($this->log_path)) $this->log_path = $this->download_path . time() . '.log';
 
         $command = $this->axel_path;                                            // Path to Axel downloader
-        $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->getLogPath()}";
+        $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->log_path}";
 
         $this->last_command = AxelDownload::STARTED;
 
@@ -172,28 +197,27 @@ class AxelDownload {
             if (!$this->detach) {
 
                 $this->updateStatus();
-
-                foreach((array) $this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, true, $this->error);
-                    }
-                }
+                $this->runCallbacks(true);
             }
         }
-        else {
-            if (!$this->detach) {
-
-                foreach((array) $this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, false, $this->error);
-                    }
-                }
-            }
-        }
+        else if (!$this->detach) $this->runCallbacks(false);
 
         return $this;
+    }
+
+    /**
+     * Start the download process - async
+     *
+     * @param null|string $address File to download
+     * @param null|string $filename Filename to save the downloaded file with
+     * @param null $download_path Path to save the downloaded file at
+     * @param callable $callback An optional callback to provide progress updates
+     * @return $this
+     */
+    public function startAsync($address = null, $filename = null, $download_path = null, \Closure $callback = null) {
+
+        $this->detach = true;
+        return $this->start($address, $filename, $download_path, $callback);
     }
 
     /**
@@ -215,7 +239,7 @@ class AxelDownload {
             else {
                 $this->process_info = null;
                 // Remove the log file
-                unlink($this->getLogPath());
+                unlink($this->log_path);
                 $this->last_command = AxelDownload::PAUSED;
             }
         }
@@ -257,7 +281,7 @@ class AxelDownload {
 
         if ($this->last_command == AxelDownload::COMPLETED) {
 
-            unlink($this->getLogPath());
+            unlink($this->log_path);
             $this->last_command = AxelDownload::CLEARED;
 
             return true;
@@ -276,9 +300,9 @@ class AxelDownload {
      */
     protected function checkDownloadFile() {
 
-        if (file_exists($this->getLogPath())) {
+        if (file_exists($this->log_path)) {
 
-            $contents = file_get_contents($this->getLogPath());
+            $contents = file_get_contents($this->log_path);
 
             $regex = '/\[\s*([0-9]{1,3})%\].*\[\s*([0-9]+\.[0-9]+[A-Z][a-zA-Z]\/s)\]\s*\[([0-9]+:[0-9]+)\]/i';
 
@@ -296,31 +320,30 @@ class AxelDownload {
 
         if (file_exists($this->getFullPath() . '.st')) {
 
-            if ($this->detach) {
-
-                foreach ((array)$this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, false, $this->error);
-                    }
-                }
-            }
+            if ($this->detach) $this->runCallbacks(false);
 
             return false;
         }
         else {
 
-            if ($this->detach) {
-
-                foreach ((array)$this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, true, $this->error);
-                    }
-                }
-            }
+            if ($this->detach) $this->runCallbacks(true);
 
             return true;
+        }
+    }
+
+    /**
+     * Run callbacks attached to object
+     *
+     * @param bool $success Whether to pass a success state or an error state to callbacks
+     */
+    protected function runCallbacks($success) {
+
+        foreach ((array)$this->callbacks as $callback) {
+
+            if (is_callable($callback)) {
+                $callback($this, $this->status, $success, $this->error);
+            }
         }
     }
 
@@ -350,7 +373,7 @@ class AxelDownload {
      *
      * @return string
      */
-    public function getFilename() {
+    protected function getFilename() {
         return $this->filename;
     }
 
@@ -359,7 +382,7 @@ class AxelDownload {
      *
      * @return null|string
      */
-    private function getDownloadPath() {
+    protected function getDownloadPath() {
         return $this->download_path;
     }
 
@@ -370,15 +393,6 @@ class AxelDownload {
      */
     public function getFullPath() {
         return $this->getDownloadPath() . $this->getFilename();
-    }
-
-    /**
-     * The full path to the log file
-     *
-     * @return string
-     */
-    public function getLogPath() {
-        return $this->log_path;
     }
 
     /**

@@ -56,7 +56,7 @@ $axel->clearCompleted()
 
 In order to install RPVR you will need:
 
- - [LAMP] - A full Lamp stack
+ - [LAMP] - A full Lamp stack with PHP 5.4 or higher
  - [Axel] - A linux server with Axel installed
 
 ### Install Instructions

@@ -18,8 +18,8 @@ namespace Axel;
 
 class AxelDownloadTest extends \TestFixture {
 
-    protected $short_download_address   = 'http://www.google.com';
-    protected $long_download_address    = 'http://ipv4.download.thinkbroadband.com/1GB.zip';
+    protected $short_address   = 'http://www.google.com';
+    protected $long_address    = 'http://ipv4.download.thinkbroadband.com/1GB.zip';
 
     public function testAxelInstalled() {
 
@@ -34,7 +34,7 @@ class AxelDownloadTest extends \TestFixture {
      */
     public function testStartDownloadAsync() {
 
-        $download_address = $this->long_download_address;
+        $download_address = $this->long_address;
 
         // Instance
         $this->assertFileNotExists(basename($download_address));
@@ -42,7 +42,7 @@ class AxelDownloadTest extends \TestFixture {
         $axel->startAsync($download_address);
 
         // Wait for download to initialise
-        sleep(10);
+        $this->setTimeout(10);
 
         // Tests
         $this->assertSame($axel->last_command, AxelDownload::STARTED);
@@ -57,7 +57,7 @@ class AxelDownloadTest extends \TestFixture {
 
         $this->assertFileExists($axel->getFullPath());
         $this->assertFileExists($axel->getFullPath() . '.st');
-        $this->assertFileExists($axel->getLogPath());
+        $this->assertFileExists($axel->log_path);
 
         $status = $axel->updateStatus();
 
@@ -76,13 +76,13 @@ class AxelDownloadTest extends \TestFixture {
 
         $this->assertFileExists($axel->getFullPath());
         $this->assertFileExists($axel->getFullPath() . '.st');
-        $this->assertFileExists($axel->getLogPath());
+        $this->assertFileExists($axel->log_path);
 
         $axel->cancel();
 
         $this->assertFileNotExists($axel->getFullPath());
         $this->assertFileNotExists($axel->getFullPath() . '.st');
-        $this->assertFileNotExists($axel->getLogPath());
+        $this->assertFileNotExists($axel->log_path);
 
         return $axel;
     }
@@ -92,25 +92,11 @@ class AxelDownloadTest extends \TestFixture {
      */
     public function testStartDownloadSync() {
 
-        $download_address = $this->short_download_address;
-
-        // Instance
-        $this->assertFileNotExists(basename($download_address));
-        $axel = new AxelDownload();
-        $this->assertSame($axel->last_command, AxelDownload::CREATED);
+        $download_address = $this->short_address;
+        $axel = $this->setUpSyncDownload($download_address);
         $axel->start($download_address);
 
-        // Tests
-        $this->assertSame($axel->last_command, AxelDownload::COMPLETED);
-        $this->assertFileExists($axel->getFullPath());
-        $contents = file_get_contents($axel->getFullPath());
-        $this->assertContains('input', $contents);
-        $this->assertTrue($axel->clearCompleted());
-        $this->assertFileNotExists($axel->getLogPath());
-        $this->assertFileExists($axel->getFullPath());
-        $this->assertFileNotExists($axel->getFullPath() . '.st');
-        unlink($axel->getFullPath());
-        $this->assertFileNotExists($axel->getFullPath());
+        $this->assertSuccessfulDownload($axel);
 
         return $axel;
     }
@@ -120,13 +106,26 @@ class AxelDownloadTest extends \TestFixture {
      */
     public function testStartDownloadWithOptionsSync() {
 
-        $download_address = $this->short_download_address;
+        $download_address = $this->short_address;
+        $axel = $this->setUpSyncDownload($download_address);
+        $axel->start($download_address, 'test.html', dirname(__DIR__ . '/../')); // Use current directory to test
+
+        $this->assertSuccessfulDownload($axel);
+
+        return $axel;
+    }
+
+    protected function setUpSyncDownload($download_address) {
 
         // Instance
         $this->assertFileNotExists(basename($download_address));
         $axel = new AxelDownload();
         $this->assertSame($axel->last_command, AxelDownload::CREATED);
-        $axel->start($download_address, 'test.html', dirname(__DIR__ . '/../')); // Use current directory to test
+
+        return $axel;
+    }
+
+    protected function assertSuccessfulDownload(AxelDownload $axel) {
 
         // Tests
         $this->assertSame($axel->last_command, AxelDownload::COMPLETED);
@@ -134,7 +133,7 @@ class AxelDownloadTest extends \TestFixture {
         $contents = file_get_contents($axel->getFullPath());
         $this->assertContains('input', $contents);
         $this->assertTrue($axel->clearCompleted());
-        $this->assertFileNotExists($axel->getLogPath());
+        $this->assertFileNotExists($axel->log_path);
         $this->assertFileExists($axel->getFullPath());
         $this->assertFileNotExists($axel->getFullPath() . '.st');
         unlink($axel->getFullPath());
@@ -148,7 +147,7 @@ class AxelDownloadTest extends \TestFixture {
      */
     public function testStartDownloadSyncWithCallback() {
 
-        $download_address = $this->short_download_address;
+        $download_address = $this->short_address;
 
         $callback_called = false;
 
@@ -165,7 +164,7 @@ class AxelDownloadTest extends \TestFixture {
             $contents = file_get_contents($axel->getFullPath());
             $this->assertContains('input', $contents);
             $this->assertTrue($axel->clearCompleted());
-            $this->assertFileNotExists($axel->getLogPath());
+            $this->assertFileNotExists($axel->log_path);
             $this->assertFileExists($axel->getFullPath());
             $this->assertFileNotExists($axel->getFullPath() . '.st');
             unlink($axel->getFullPath());
@@ -180,7 +179,7 @@ class AxelDownloadTest extends \TestFixture {
      */
     public function testStartDownloadASyncWithCallback() {
 
-        $download_address = $this->long_download_address;
+        $download_address = $this->long_address;
 
         $callback_count = 0;
 
@@ -199,10 +198,10 @@ class AxelDownloadTest extends \TestFixture {
             $this->assertEmpty($error);
         });
 
-        sleep(10);
+        $this->setTimeout(10);
 
         for ($i = 0; $i < 2; $i++) {
-            sleep(5);
+            $this->setTimeout(5);
 
             $axel->updateStatus();
         }
