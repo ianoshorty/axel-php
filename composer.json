@@ -1,10 +1,14 @@
 {
   "name": "axel-php/axel",
   "type": "library",
-  "description": "A PHP library to access the Axel command line downloader.",
+  "description": "A PHP library to use the Axel command line file downloader with download acceleration.",
   "keywords": [
     "axel",
-    "axel-php"
+    "axel-php",
+    "download",
+    "download manager",
+    "file download",
+    "download queue"
   ],
   "license": "MIT",
   "authors": [
