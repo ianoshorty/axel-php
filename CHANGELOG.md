@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.5: June 2nd, 2015
+- AxelDownload classes now working with passing tests
+
 ### 0.0.4: June 1st, 2015
 - Major refactoring based upon codeclimate feedback
 
