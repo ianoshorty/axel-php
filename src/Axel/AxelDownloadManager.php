@@ -55,21 +55,22 @@ class AxelDownloadManager {
 
     public function processQueue() {
 
-        if (!empty($this->scheduled)) {
+        if (count($this->scheduled) > 0) {
 
             $this->processing = true;
 
-            while(count($this->running) < $this->concurrent_downloads) {
+            while((count($this->running) < $this->concurrent_downloads) && !empty($this->scheduled)) {
 
                 $download = array_shift($this->scheduled);
-                array_push($this->running, $download);
-                $this->queue->addDownloadToQueue($download);
+
+                if ($download instanceof AxelDownload) {
+                    array_push($this->running, $download);
+                    $this->queue->addDownloadToQueue($download);
+                }
             }
         }
         else {
-
             //At present, queue will stop running when no more jobs have been added to it
-
             $this->processing = false;
         }
     }
@@ -100,29 +101,5 @@ class AxelDownloadManager {
         if ($this->processing) {
             $this->processQueue();
         }
-    }
-
-    /*
-    public function pauseQueue() {
-
-        if (!empty($this->running)) {
-
-            foreach($this->running as $download) {
-
-                $download->pause();
-                array_unshift($this->scheduled, $download);
-            }
-        }
-    }*/
-
-    /**
-     * A test method used to confirm project is setup and installed correctly
-     * @todo Remove this once project has been cleaned up with full test suite
-     *
-     * @return string 'test'
-     */
-    public function outputString() {
-
-        return 'test';
     }
 }
