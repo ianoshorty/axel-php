@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.6: June 2nd, 2015
+- AxelDownload can now set options externally
+
 ### 0.0.5: June 2nd, 2015
 - AxelDownload classes now working with passing tests
 
