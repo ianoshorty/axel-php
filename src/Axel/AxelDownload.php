@@ -130,39 +130,62 @@ class AxelDownload {
     }
 
     /**
-     * Start the download process - async
+     * Setup download Parameters
      *
-     * @param string $address File to download
-     * @param string $filename Filename to save the downloaded file with
-     * @param null $download_path Path to save the downloaded file at
-     * @param callable $callback An optional callback to provide progress updates
+     * @param array $options An array containing options to set on the download
      * @return $this
      */
-    public function startAsync($address, $filename = null, $download_path = null, \Closure $callback = null) {
+    public function addDownloadParameters($options) {
 
-        $this->detach = true;
-        return $this->start($address, $filename, $download_path, $callback);
+        if (!is_array($options)) {
+            return $this;
+        }
+
+        if (isset($options['address']) && is_string($options['address'])) {
+            $this->address              = $options['address'];
+        }
+
+        if (isset($options['filename']) && is_string($options['filename']) && !empty($options['filename'])) {
+            $this->filename = $options['filename'];
+        }
+
+        if (isset($options['download_path']) && is_string($options['download_path']) && !empty($options['download_path'])) {
+            $this->download_path = $options['download_path'];
+        }
+
+        if (isset($options['callback']) && is_callable($options['callback'])) {
+            $this->callbacks[] = $options['callback'];
+        }
+
+        return $this;
     }
 
     /**
      * Start the download process
      *
-     * @param string $address File to download
-     * @param string $filename Filename to save the downloaded file with
-     * @param null $download_path Path to save the downloaded file at
+     * @param null|string $address File to download
+     * @param null|string $filename Filename to save the downloaded file with
+     * @param null|string $download_path Path to save the downloaded file at
      * @param callable $callback An optional callback to provide progress updates
      * @return $this
      */
-    public function start($address, $filename = null, $download_path = null, \Closure $callback = null) {
+    public function start($address = null, $filename = null, $download_path = null, \Closure $callback = null) {
 
-        $this->address              = $address;
-        $this->filename             = (is_string($filename) && !empty($filename))           ? $filename : basename($this->address);
-        $this->download_path        = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
-        if (is_callable($callback)) $this->callbacks[] = $callback;
+        $this->addDownloadParameters([
+            'address'       => $address,
+            'filename'      => $filename,
+            'download_path' => $download_path,
+            'callback'      => $callback
+        ]);
 
-        if (!isset($this->log_path) || empty($this->log_path) || !is_string($this->log_path)) {
-            $this->log_path = $this->download_path . time() . '.log';
+        if (!isset($this->address)) {
+            $this->error = 'Unable to download. Download address not specified.';
+            return $this;
         }
+
+        if (!isset($this->filename)) $this->filename = basename($this->address);
+
+        if (!isset($this->log_path) || empty($this->log_path) || !is_string($this->log_path)) $this->log_path = $this->download_path . time() . '.log';
 
         $command = $this->axel_path;                                            // Path to Axel downloader
         $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->log_path}";
@@ -180,6 +203,21 @@ class AxelDownload {
         else if (!$this->detach) $this->runCallbacks(false);
 
         return $this;
+    }
+
+    /**
+     * Start the download process - async
+     *
+     * @param null|string $address File to download
+     * @param null|string $filename Filename to save the downloaded file with
+     * @param null $download_path Path to save the downloaded file at
+     * @param callable $callback An optional callback to provide progress updates
+     * @return $this
+     */
+    public function startAsync($address = null, $filename = null, $download_path = null, \Closure $callback = null) {
+
+        $this->detach = true;
+        return $this->start($address, $filename, $download_path, $callback);
     }
 
     /**
