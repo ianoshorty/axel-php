@@ -118,6 +118,34 @@ class AxelDownloadTest extends \TestFixture {
     /**
      * @depends testAxelInstalled
      */
+    public function testStartDownloadWithOptionsSync() {
+
+        $download_address = $this->short_download_address;
+
+        // Instance
+        $this->assertFileNotExists(basename($download_address));
+        $axel = new AxelDownload();
+        $this->assertSame($axel->last_command, AxelDownload::CREATED);
+        $axel->start($download_address, 'test.html', dirname(__DIR__ . '/../')); // Use current directory to test
+
+        // Tests
+        $this->assertSame($axel->last_command, AxelDownload::COMPLETED);
+        $this->assertFileExists($axel->getFullPath());
+        $contents = file_get_contents($axel->getFullPath());
+        $this->assertContains('input', $contents);
+        $this->assertTrue($axel->clearCompleted());
+        $this->assertFileNotExists($axel->getLogPath());
+        $this->assertFileExists($axel->getFullPath());
+        $this->assertFileNotExists($axel->getFullPath() . '.st');
+        unlink($axel->getFullPath());
+        $this->assertFileNotExists($axel->getFullPath());
+
+        return $axel;
+    }
+
+    /**
+     * @depends testAxelInstalled
+     */
     public function testStartDownloadSyncWithCallback() {
 
         $download_address = $this->short_download_address;
