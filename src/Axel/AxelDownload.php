@@ -103,9 +103,9 @@ class AxelDownload {
      * @param string $axel_path Full path to Axel binary
      * @param int $connections The number of connections to attempt to use to download the file
      */
-    public function __construct($axel_path = '/usr/bin/axel', $connections = 10) {
+    public function __construct($axel_path = 'axel', $connections = 10) {
 
-        $this->axel_path            = (is_string($axel_path) && !empty($axel_path))         ? $axel_path : '/usr/bin/axel';
+        $this->axel_path            = (is_string($axel_path) && !empty($axel_path))         ? $axel_path : 'axel';
         $this->connections          = (is_int($connections) && $connections >= 1)           ? $connections : 10;
     }
 
