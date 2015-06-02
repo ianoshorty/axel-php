@@ -293,7 +293,9 @@ class AxelDownload {
     }
 
     /**
-     * @param bool $success Wether to pass a success state or an error state to callbacks
+     * Run callbacks attached to object
+     *
+     * @param bool $success Whether to pass a success state or an error state to callbacks
      */
     protected function runCallbacks($success) {
 
