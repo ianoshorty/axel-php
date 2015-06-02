@@ -57,7 +57,7 @@ class AxelDownloadTest extends \TestFixture {
 
         $this->assertFileExists($axel->getFullPath());
         $this->assertFileExists($axel->getFullPath() . '.st');
-        $this->assertFileExists($axel->getLogPath());
+        $this->assertFileExists($axel->log_path);
 
         $status = $axel->updateStatus();
 
@@ -76,13 +76,13 @@ class AxelDownloadTest extends \TestFixture {
 
         $this->assertFileExists($axel->getFullPath());
         $this->assertFileExists($axel->getFullPath() . '.st');
-        $this->assertFileExists($axel->getLogPath());
+        $this->assertFileExists($axel->log_path);
 
         $axel->cancel();
 
         $this->assertFileNotExists($axel->getFullPath());
         $this->assertFileNotExists($axel->getFullPath() . '.st');
-        $this->assertFileNotExists($axel->getLogPath());
+        $this->assertFileNotExists($axel->log_path);
 
         return $axel;
     }
@@ -133,7 +133,7 @@ class AxelDownloadTest extends \TestFixture {
         $contents = file_get_contents($axel->getFullPath());
         $this->assertContains('input', $contents);
         $this->assertTrue($axel->clearCompleted());
-        $this->assertFileNotExists($axel->getLogPath());
+        $this->assertFileNotExists($axel->log_path);
         $this->assertFileExists($axel->getFullPath());
         $this->assertFileNotExists($axel->getFullPath() . '.st');
         unlink($axel->getFullPath());
@@ -164,7 +164,7 @@ class AxelDownloadTest extends \TestFixture {
             $contents = file_get_contents($axel->getFullPath());
             $this->assertContains('input', $contents);
             $this->assertTrue($axel->clearCompleted());
-            $this->assertFileNotExists($axel->getLogPath());
+            $this->assertFileNotExists($axel->log_path);
             $this->assertFileExists($axel->getFullPath());
             $this->assertFileNotExists($axel->getFullPath() . '.st');
             unlink($axel->getFullPath());

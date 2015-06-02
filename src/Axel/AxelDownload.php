@@ -70,7 +70,7 @@ class AxelDownload {
     /**
      * @var string The path to the log file that is parsed to get progress information
      */
-    protected $log_path;
+    public $log_path;
 
     /**
      * @var array Array containing process information if the process is running.
@@ -160,10 +160,12 @@ class AxelDownload {
         $this->download_path        = (is_string($download_path) && !empty($download_path)) ? $download_path : null;
         if (is_callable($callback)) $this->callbacks[] = $callback;
 
-        $this->log_path = $this->download_path . time() . '.log';
+        if (!isset($this->log_path) || empty($this->log_path) || !is_string($this->log_path)) {
+            $this->log_path = $this->download_path . time() . '.log';
+        }
 
         $command = $this->axel_path;                                            // Path to Axel downloader
-        $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->getLogPath()}";
+        $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->log_path}";
 
         $this->last_command = AxelDownload::STARTED;
 
@@ -199,7 +201,7 @@ class AxelDownload {
             else {
                 $this->process_info = null;
                 // Remove the log file
-                unlink($this->getLogPath());
+                unlink($this->log_path);
                 $this->last_command = AxelDownload::PAUSED;
             }
         }
@@ -241,7 +243,7 @@ class AxelDownload {
 
         if ($this->last_command == AxelDownload::COMPLETED) {
 
-            unlink($this->getLogPath());
+            unlink($this->log_path);
             $this->last_command = AxelDownload::CLEARED;
 
             return true;
@@ -260,9 +262,9 @@ class AxelDownload {
      */
     protected function checkDownloadFile() {
 
-        if (file_exists($this->getLogPath())) {
+        if (file_exists($this->log_path)) {
 
-            $contents = file_get_contents($this->getLogPath());
+            $contents = file_get_contents($this->log_path);
 
             $regex = '/\[\s*([0-9]{1,3})%\].*\[\s*([0-9]+\.[0-9]+[A-Z][a-zA-Z]\/s)\]\s*\[([0-9]+:[0-9]+)\]/i';
 
@@ -333,7 +335,7 @@ class AxelDownload {
      *
      * @return string
      */
-    public function getFilename() {
+    protected function getFilename() {
         return $this->filename;
     }
 
@@ -342,7 +344,7 @@ class AxelDownload {
      *
      * @return null|string
      */
-    private function getDownloadPath() {
+    protected function getDownloadPath() {
         return $this->download_path;
     }
 
@@ -353,15 +355,6 @@ class AxelDownload {
      */
     public function getFullPath() {
         return $this->getDownloadPath() . $this->getFilename();
-    }
-
-    /**
-     * The full path to the log file
-     *
-     * @return string
-     */
-    public function getLogPath() {
-        return $this->log_path;
     }
 
     /**
