@@ -2,7 +2,7 @@
 
 /*************************************************************************
  *
- * Axel class represents a managed collection of AXEL downloads.
+ * AxelDownloadManager class manages a series of downloads.
  *
  * =======================================================================
  *
@@ -16,19 +16,18 @@
 
 namespace Axel;
 
-class Axel {
+class AxelDownloadManager {
 
+    protected $queue;
     protected $path_to_axel;
-    protected $arguments;
-    protected $queue        = array();
     protected $running      = array();
+    protected $scheduled    = array();
     protected $concurrent   = 1;
 
-    public function __construct($concurrent = 1, $path_to_axel = null, $arguments = array()) {
+    public function __construct($concurrent = 1, $path_to_axel = null) {
 
         $this->concurrent   = (is_numeric($concurrent) && $concurrent >= 0)? $concurrent : 1;
-        $this->path_to_axel = (is_string($path_to_axel))? $path_to_axel : null;
-        $this->arguments    = (is_array($arguments)) ? $arguments : array();
+        $this->path_to_axel = (is_string($path_to_axel))? $path_to_axel : 'axel';
     }
 
     public function queueDownload($address, $filename = null, $download_path = null) {

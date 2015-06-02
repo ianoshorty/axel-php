@@ -2,7 +2,8 @@
 
 /*************************************************************************
  *
- * AxelTest class runs PHPUnit tests of Axel
+ * AxelDownloadManagerQueueInterface interface describes an interactive
+ * queue that download jobs can be pushed to.
  *
  * =======================================================================
  *
@@ -15,11 +16,3 @@
  */
 
 namespace Axel;
-
-class AxelTest extends \TestFixture {
-
-    public function testOutputString() {
-        $axel = new Axel();
-        $this->assertSame($axel->outputString(), 'test');
-    }
-}
