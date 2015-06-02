@@ -9,6 +9,8 @@ The Axel PHP library wraps around the C based [Axel] library. [Axel] performs ac
 
 Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below for usage.
 
+Axel PHP comes with an optional FIFO download manager with the ability to set numbers of current downloads. Just implement `AxelDownloadManagerQueueInterface`.
+
 ** _PLEASE NOTE_: This library is under active development and is subject to change at any time. **
 
 ## Example Usage
@@ -68,8 +70,14 @@ $status = $axel->updateStatus();
 $axel->clearCompleted()
 ```
 
-### Axel Managed Download Queue
-// TODO
+### Axel Managed Download Queue (Synchronous)
+
+```php
+$dm = new AxelDownloadManager(new AxelDownloadManagerSyncQueue(), 'axel');
+$dm->queueDownload('http://www.google.com', 'file1.html');
+$dm->queueDownload('http://www.yahoo.com', 'file2.html');
+$dm->processQueue();
+```
 
 ### Version
 0.0.6

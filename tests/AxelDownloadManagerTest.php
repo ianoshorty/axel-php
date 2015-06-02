@@ -18,7 +18,7 @@ namespace Axel;
 
 class AxelDownloadManagerTest extends \TestFixture {
 
-    public function testSyncDownloadWithJobs($count = 4) {
+    public function testSyncDownloadWithJobs($count = 2) {
 
         $dm = new AxelDownloadManager(new AxelDownloadManagerSyncQueue(), 'axel', $count);
 
