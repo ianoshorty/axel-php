@@ -16,3 +16,8 @@
  */
 
 namespace Axel;
+
+interface AxelDownloadManagerQueueInterface {
+
+
+}
