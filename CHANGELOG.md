@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.7: June 2nd, 2015
+- AxelDownloadManager now works offering simple queueing
+
 ### 0.0.6: June 2nd, 2015
 - AxelDownload can now set options externally
 
