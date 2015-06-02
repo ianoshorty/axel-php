@@ -115,20 +115,71 @@ class AxelDownloadTest extends \TestFixture {
         return $axel;
     }
 
-    /*public function testStartDownloadAttachedWithCallback() {
+    /**
+     * @depends testAxelInstalled
+     */
+    public function testStartDownloadSyncWithCallback() {
 
-        $download_address = 'http://www.google.com';
+        $download_address = $this->short_download_address;
+
+        $callback_called = false;
 
         // Instance
-        $axel = new AxelDownload($download_address);
-        $axel->start(function($axel, $success, $error) use ($download_address) {
+        $axel = new AxelDownload();
+        $axel->start($download_address, null, null, function(AxelDownload $axel, $status, $success, $error) use ($download_address, &$callback_called) {
+
+            $callback_called = true;
+
             // Tests
             $this->assertTrue($success);
-            $this->assertSame($axel->last_command, AxelDownload::STARTED);
-            $this->assertFileExists(basename($download_address));
-            $contents = file_get_contents(basename($download_address));
+            $this->assertSame($axel->last_command, AxelDownload::COMPLETED);
+            $this->assertFileExists($axel->getFullPath());
+            $contents = file_get_contents($axel->getFullPath());
             $this->assertContains('input', $contents);
-            $this->log($axel, 'Download object');
+            $this->assertTrue($axel->clearCompleted());
+            $this->assertFileNotExists($axel->getLogPath());
+            $this->assertFileExists($axel->getFullPath());
+            $this->assertFileNotExists($axel->getFullPath() . '.st');
+            unlink($axel->getFullPath());
+            $this->assertFileNotExists($axel->getFullPath());
         });
-    }*/
+
+        $this->assertTrue($callback_called);
+    }
+
+    /**
+     * @depends testAxelInstalled
+     */
+    public function testStartDownloadASyncWithCallback() {
+
+        $download_address = $this->long_download_address;
+
+        $callback_count = 0;
+
+        // Instance
+        $axel = new AxelDownload();
+        $axel->startAsync($download_address, null, null, function(AxelDownload $axel, $status, $success, $error) use ($download_address, &$callback_count) {
+
+            $callback_count++;
+
+            // Tests
+            $this->assertFalse($success);
+            $this->assertSame($axel->last_command, AxelDownload::STARTED);
+            $this->assertFileExists($axel->getFullPath());
+            $this->assertFileExists($axel->getFullPath() . '.st');
+            $this->assertSame(3, count($status));
+            $this->assertEmpty($error);
+        });
+
+        sleep(10);
+
+        for ($i = 0; $i < 2; $i++) {
+            sleep(5);
+
+            $axel->updateStatus();
+        }
+
+        $this->assertSame(2, $callback_count);
+        $this->testCancelDownloadAsync($axel);
+    }
 }

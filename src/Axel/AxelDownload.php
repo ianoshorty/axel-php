@@ -174,7 +174,10 @@ class AxelDownload {
                 $this->updateStatus();
 
                 foreach((array) $this->callbacks as $callback) {
-                    $callback($this, $this->status, true);
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, true, $this->error);
+                    }
                 }
             }
         }
@@ -182,7 +185,10 @@ class AxelDownload {
             if (!$this->detach) {
 
                 foreach((array) $this->callbacks as $callback) {
-                    $callback($this, $this->status, false, $this->error);
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, false, $this->error);
+                    }
                 }
             }
         }
@@ -289,9 +295,31 @@ class AxelDownload {
         }
 
         if (file_exists($this->getFullPath() . '.st')) {
+
+            if ($this->detach) {
+
+                foreach ((array)$this->callbacks as $callback) {
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, false, $this->error);
+                    }
+                }
+            }
+
             return false;
         }
         else {
+
+            if ($this->detach) {
+
+                foreach ((array)$this->callbacks as $callback) {
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, true, $this->error);
+                    }
+                }
+            }
+
             return true;
         }
     }
