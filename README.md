@@ -110,12 +110,12 @@ Want to contribute? Great! Feel free to get in touch with me and we can collabor
 
 ### TODO
 
--- Manage downloads in a queue (Axel)
 -- Add to packagist
 -- Document
 -- Possible log options / write to log file?
 -- Intelligently deal with both concurrent connections and concurrent downloads
 -- Check write permissions in download directory
+-- Pause queue (Maybe subclass?)
 
 ---
 ## License
