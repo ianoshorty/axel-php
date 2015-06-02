@@ -18,8 +18,28 @@ namespace Axel;
 
 class AxelDownloadManagerTest extends \TestFixture {
 
-    public function testOutputString() {
-        $axel = new AxelDownloadManager();
-        $this->assertSame($axel->outputString(), 'test');
+    public function testSyncDownloadWithJobs($count = 2) {
+
+        $dm = new AxelDownloadManager(new AxelDownloadManagerSyncQueue(), 'axel', $count);
+
+        $this->assertInstanceOf('Axel\AxelDownloadManager', $dm);
+
+        for ($i = 0; $i < $count; $i++ ) {
+
+            $download = $dm->queueDownload('http://www.google.com', 'file' . $i . '.html');
+            $this->assertFileNotExists($download->getFullPath());
+        }
+
+        unset($download);
+        $dm->processQueue();
+
+        for ($i = 0; $i < $count; $i++ ) {
+
+            $this->assertArrayHasKey($i, $dm->completed);
+            $download = $dm->completed[$i];
+            $this->assertFileExists($download->getFullPath());
+            $this->assertFileNotExists($download->log_path);
+            unlink($download->getFullPath());
+        }
     }
 }

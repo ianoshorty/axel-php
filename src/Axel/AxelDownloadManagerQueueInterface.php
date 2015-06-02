@@ -19,5 +19,7 @@ namespace Axel;
 
 interface AxelDownloadManagerQueueInterface {
 
+    public function setDownloadManager(AxelDownloadManager $axelDownloadManager);
+    public function addDownloadToQueue(AxelDownload $download);
 
 }

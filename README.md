@@ -9,6 +9,8 @@ The Axel PHP library wraps around the C based [Axel] library. [Axel] performs ac
 
 Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below for usage.
 
+Axel PHP comes with an optional FIFO download manager with the ability to set numbers of current downloads. Just implement `AxelDownloadManagerQueueInterface`.
+
 ** _PLEASE NOTE_: This library is under active development and is subject to change at any time. **
 
 ## Example Usage
@@ -17,7 +19,7 @@ Axel PHP offers Async Downloads, Sync Downloads and a download Queue. See below 
 
 ```php
 $axel = new AxelDownload();
-$axel->start($download_address, null, null, function($axel, $status, $success, $error) use ($download_address) {
+$axel->start('http://www.google.com', null, null, function($axel, $status, $success, $error) {
     echo 'File Downloaded';
     print_r($status);
 });
@@ -28,6 +30,32 @@ $axel->start($download_address, null, null, function($axel, $status, $success, $
 ```php
 $axel = new AxelDownload();
 $axel->startAsync('http://ipv4.download.thinkbroadband.com/1GB.zip', 'test.zip', '~/');
+```
+
+### Start Async Download With Progress Callbacks
+
+```php
+$axel = new AxelDownload();
+$axel->startAsync('http://ipv4.download.thinkbroadband.com/1GB.zip', 'test.zip', '~/', function($axel, $status, $success, $error) {
+   echo 'Progress updated';
+   print_r($status);
+});
+```
+
+### Setup Download / Delayed Start
+
+```php
+$axel = new AxelDownload();
+$axel->addDownloadParameters([
+    'address'           => 'http://www.google.com',
+    'filename'          => 'test.html',
+    'download-path'     => '~/',
+    'callback'          => function($axel, $status, $success, $error) {
+        echo 'Progress updated';
+        print_r($status);
+    }
+]);
+$axel->startAsync();
 ```
 
 ### Get Download Status
@@ -42,8 +70,14 @@ $status = $axel->updateStatus();
 $axel->clearCompleted()
 ```
 
-### Axel Managed Download Queue
-// TODO
+### Axel Managed Download Queue (Synchronous)
+
+```php
+$dm = new AxelDownloadManager(new AxelDownloadManagerSyncQueue(), 'axel');
+$dm->queueDownload('http://www.google.com', 'file1.html');
+$dm->queueDownload('http://www.yahoo.com', 'file2.html');
+$dm->processQueue();
+```
 
 ### Version
 0.0.6
@@ -84,10 +118,12 @@ Want to contribute? Great! Feel free to get in touch with me and we can collabor
 
 ### TODO
 
--- Full implement callback closure for any time a progress update is made
--- Manage downloads in a queue (Axel)
 -- Add to packagist
 -- Document
+-- Possible log options / write to log file?
+-- Intelligently deal with both concurrent connections and concurrent downloads
+-- Check write permissions in download directory
+-- Pause queue (Maybe subclass?)
 
 ---
 ## License

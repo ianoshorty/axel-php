@@ -30,15 +30,6 @@ class TestFixture extends \PHPUnit_Framework_TestCase
     {
     }
 
-    protected function assertAxel(Axel $axel)
-    {
-
-    }
-
-    protected function assertInstanceOfAxel($d)
-    {
-        $this->assertInstanceOf('Axel\Axel', $d);
-    }
 
     protected function log($output, $message = null) {
 

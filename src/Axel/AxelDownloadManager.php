@@ -20,13 +20,17 @@ class AxelDownloadManager {
 
     protected $queue;
     protected $path_to_axel;
+    protected $processing               = false;
     protected $running                  = [];
     protected $scheduled                = [];
     protected $concurrent_downloads     = 1;
     protected $concurrent_connections   = 1;
+    public $completed                   = [];
 
-    public function __construct($path_to_axel = null, $concurrent_downloads = 1, $concurrent_connections = 10) {
+    public function __construct(AxelDownloadManagerQueueInterface $queue, $path_to_axel = null, $concurrent_downloads = 1, $concurrent_connections = 10) {
 
+        $this->queue                    = $queue;
+        $this->queue->setDownloadManager($this);
         $this->path_to_axel             = (is_string($path_to_axel))? $path_to_axel : 'axel';
         $this->concurrent_downloads     = (is_numeric($concurrent_downloads) && $concurrent_downloads >= 0)? $concurrent_downloads : 1;
         $this->concurrent_connections   = (is_numeric($concurrent_connections) && $concurrent_connections >= 0)? $concurrent_connections : 10;
@@ -46,34 +50,56 @@ class AxelDownloadManager {
     }
 
     public function enqueueDownload(AxelDownload $download) {
-
-        $this->scheduled[] = $download;
+        array_push($this->scheduled, $download);
     }
 
     public function processQueue() {
 
+        if (count($this->scheduled) > 0) {
+
+            $this->processing = true;
+
+            while((count($this->running) < $this->concurrent_downloads) && !empty($this->scheduled)) {
+
+                $download = array_shift($this->scheduled);
+
+                if ($download instanceof AxelDownload) {
+                    array_push($this->running, $download);
+                    $this->queue->addDownloadToQueue($download);
+                }
+            }
+        }
+        else {
+            //At present, queue will stop running when no more jobs have been added to it
+            $this->processing = false;
+        }
     }
 
-    public function pauseQueue() {
+    public function notifyCompletedDownload(AxelDownload $download) {
 
-    }
+        if (!empty($this->running)) {
 
-    public function clearQueueCompleted() {
+            $array_key = null;
 
-    }
+            foreach ($this->running as $key => $job) {
 
-    public function resumeQueue() {
+                if ($job === $download) { // Todo check this
 
-    }
+                    $download->clearCompleted();
+                    array_push($this->completed, $download);
+                    $array_key = $key;
+                    break;
+                }
+            }
 
-    /**
-     * A test method used to confirm project is setup and installed correctly
-     * @todo Remove this once project has been cleaned up with full test suite
-     *
-     * @return string 'test'
-     */
-    public function outputString() {
+            if (!empty($array_key)) {
+                unset($this->running[$array_key]);
+            }
+        }
 
-        return 'test';
+        // Add next jobs to the queue if the queue is still active
+        if ($this->processing) {
+            $this->processQueue();
+        }
     }
 }
