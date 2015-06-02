@@ -172,26 +172,10 @@ class AxelDownload {
             if (!$this->detach) {
 
                 $this->updateStatus();
-
-                foreach((array) $this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, true, $this->error);
-                    }
-                }
+                $this->runCallbacks(true);
             }
         }
-        else {
-            if (!$this->detach) {
-
-                foreach((array) $this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, false, $this->error);
-                    }
-                }
-            }
-        }
+        else if (!$this->detach) $this->runCallbacks(false);
 
         return $this;
     }
@@ -296,31 +280,28 @@ class AxelDownload {
 
         if (file_exists($this->getFullPath() . '.st')) {
 
-            if ($this->detach) {
-
-                foreach ((array)$this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, false, $this->error);
-                    }
-                }
-            }
+            if ($this->detach) $this->runCallbacks(false);
 
             return false;
         }
         else {
 
-            if ($this->detach) {
-
-                foreach ((array)$this->callbacks as $callback) {
-
-                    if (is_callable($callback)) {
-                        $callback($this, $this->status, true, $this->error);
-                    }
-                }
-            }
+            if ($this->detach) $this->runCallbacks(true);
 
             return true;
+        }
+    }
+
+    /**
+     * @param bool $success Wether to pass a success state or an error state to callbacks
+     */
+    protected function runCallbacks($success) {
+
+        foreach ((array)$this->callbacks as $callback) {
+
+            if (is_callable($callback)) {
+                $callback($this, $this->status, $success, $this->error);
+            }
         }
     }
 
