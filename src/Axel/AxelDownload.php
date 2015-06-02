@@ -103,9 +103,9 @@ class AxelDownload {
      * @param string $axel_path Full path to Axel binary
      * @param int $connections The number of connections to attempt to use to download the file
      */
-    public function __construct($axel_path = '/usr/bin/axel', $connections = 10) {
+    public function __construct($axel_path = 'axel', $connections = 10) {
 
-        $this->axel_path            = (is_string($axel_path) && !empty($axel_path))         ? $axel_path : '/usr/bin/axel';
+        $this->axel_path            = (is_string($axel_path) && !empty($axel_path))         ? $axel_path : 'axel';
         $this->connections          = (is_int($connections) && $connections >= 1)           ? $connections : 10;
     }
 
@@ -174,7 +174,10 @@ class AxelDownload {
                 $this->updateStatus();
 
                 foreach((array) $this->callbacks as $callback) {
-                    $callback($this, $this->status, true);
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, true, $this->error);
+                    }
                 }
             }
         }
@@ -182,7 +185,10 @@ class AxelDownload {
             if (!$this->detach) {
 
                 foreach((array) $this->callbacks as $callback) {
-                    $callback($this, $this->status, false, $this->error);
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, false, $this->error);
+                    }
                 }
             }
         }
@@ -289,9 +295,31 @@ class AxelDownload {
         }
 
         if (file_exists($this->getFullPath() . '.st')) {
+
+            if ($this->detach) {
+
+                foreach ((array)$this->callbacks as $callback) {
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, false, $this->error);
+                    }
+                }
+            }
+
             return false;
         }
         else {
+
+            if ($this->detach) {
+
+                foreach ((array)$this->callbacks as $callback) {
+
+                    if (is_callable($callback)) {
+                        $callback($this, $this->status, true, $this->error);
+                    }
+                }
+            }
+
             return true;
         }
     }
