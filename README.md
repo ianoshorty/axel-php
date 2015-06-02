@@ -110,10 +110,12 @@ Want to contribute? Great! Feel free to get in touch with me and we can collabor
 
 ### TODO
 
--- Full implement callback closure for any time a progress update is made
 -- Manage downloads in a queue (Axel)
 -- Add to packagist
 -- Document
+-- Possible log options / write to log file?
+-- Intelligently deal with both concurrent connections and concurrent downloads
+-- Check write permissions in download directory
 
 ---
 ## License
