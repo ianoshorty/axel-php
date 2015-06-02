@@ -16,9 +16,7 @@
 
 namespace Axel;
 
-use Symfony\Component\Process\Process;
-
-class AxelDownload {
+class AxelDownload extends AxelCore implements \JsonSerializable, \Serializable {
 
     /**
      * Enums for download states
@@ -29,12 +27,6 @@ class AxelDownload {
     const CANCELLED = 3;
     const COMPLETED = 4;
     const CLEARED = 5;
-
-    /**
-     * @var string Full path to Axel binary
-     * @example '/usr/bin/axel'
-     */
-    protected $axel_path;
 
     /**
      * @var string File to download
@@ -58,30 +50,9 @@ class AxelDownload {
     protected $callbacks      = [];
 
     /**
-     * @var bool To perform Async downloads set to true
-     */
-    protected $detach         = false;
-
-    /**
-     * @var int The number of connections to attempt to use to download the file
-     */
-    protected $connections    = 10;
-
-    /**
      * @var string The path to the log file that is parsed to get progress information
      */
     public $log_path;
-
-    /**
-     * @var array Array containing process information if the process is running.
-     * @example May contain ['pid' => 1234]
-     */
-    protected $process_info;
-
-    /**
-     * @var string The last error encountered
-     */
-    public  $error;
 
     /**
      * @var int Const value of the last download state. Starts with CREATED:0
@@ -96,38 +67,6 @@ class AxelDownload {
         'speed'             => '0.0KB/s',
         'ttl'               => 0
     ];
-
-    /**
-     * Class constructor
-     *
-     * @param string $axel_path Full path to Axel binary
-     * @param int $connections The number of connections to attempt to use to download the file
-     */
-    public function __construct($axel_path = 'axel', $connections = 10) {
-
-        $this->axel_path            = (is_string($axel_path) && !empty($axel_path))         ? $axel_path : 'axel';
-        $this->connections          = (is_int($connections) && $connections >= 1)           ? $connections : 10;
-    }
-
-    /**
-     * Check if the specified Axel binary is installed / callable
-     *
-     * @return bool Whether Axel is installed
-     */
-    public function checkAxelInstalled() {
-        $process = new Process($this->axel_path . ' --version');
-
-        $process->run();
-        if (!$process->isSuccessful()) {
-            $this->error = $process->getErrorOutput();
-
-            return false;
-        }
-        else {
-
-            return true;
-        }
-    }
 
     /**
      * Setup download Parameters
@@ -187,12 +126,9 @@ class AxelDownload {
 
         if (!isset($this->log_path) || empty($this->log_path) || !is_string($this->log_path)) $this->log_path = $this->download_path . time() . '.log';
 
-        $command = $this->axel_path;                                            // Path to Axel downloader
-        $options_string = " -avn $this->connections -o {$this->getFullPath()} $this->address > {$this->log_path}";
-
         $this->last_command = AxelDownload::STARTED;
 
-        if ($this->execute($command, $options_string)) {
+        if ($this->execute($this->axel_path, " -avn $this->connections -o {$this->getFullPath()} $this->address > $this->log_path")) {
 
             if (!$this->detach) {
 
@@ -229,14 +165,7 @@ class AxelDownload {
 
         if (isset($this->process_info['pid'])) {
 
-            // Spawn off the process
-            $process = new Process('kill -9 ' . $this->process_info['pid']);
-
-            $process->run();
-            if (!$process->isSuccessful()) {
-                $this->error = $process->getErrorOutput();
-            }
-            else {
+            if ($this->execute('kill', ' -9 ' . $this->process_info['pid'], false)) {
                 $this->process_info = null;
                 // Remove the log file
                 unlink($this->log_path);
@@ -396,29 +325,55 @@ class AxelDownload {
     }
 
     /**
-     * Executes the download
-     *
-     * @param $command The download command
-     * @param $command_args Optional arguments
-     * @return bool If the command executed successfully
+     * Specify data which should be serialized to JSON
+     * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
+     * @return mixed data which can be serialized by json_encode,
+     * which is a value of any type other than a resource.
      */
-    protected function execute($command, $command_args) {
+    public function jsonSerialize() {
+        return [
+            'axel_path'      => $this->axel_path,
+            'address'        => $this->address,
+            'filename'       => $this->filename,
+            'download_path'  => $this->download_path,
+            'detach'         => $this->detach,
+            'connections'    => $this->connections,
+            'log_path'       => $this->log_path,
+            'process_info'   => $this->process_info,
+            'error'          => $this->error,
+            'last_command'   => $this->last_command
+        ];
+    }
 
-        $detach = ($this->detach) ? ' 2>&1 &': '';
+    /**
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     */
+    public function serialize() {
 
-        // Spawn off the process
-        $process = new Process($command . $command_args . $detach . ' echo $!');
+        return $this->jsonSerialize();
+    }
 
-        $process->run();
-        if (!$process->isSuccessful()) {
-            $this->error = $process->getErrorOutput();
+    /**
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized The string representation of the object.
+     * @return void
+     */
+    public function unserialize($serialized) {
 
-            return false;
-        }
-        else {
-            $this->process_info['pid'] = $process->getOutput();
+        $array = json_decode($serialized, true);
 
-            return true;
-        }
+        $this->axel_path      = $array['axel_path'];
+        $this->address        = $array['address'];
+        $this->filename       = $array['filename'];
+        $this->download_path  = $array['download_path'];
+        $this->detach         = $array['detach'];
+        $this->connections    = $array['connections'];
+        $this->log_path       = $array['log_path'];
+        $this->process_info   = $array['process_info'];
+        $this->error          = $array['error'];
+        $this->last_command   = $array['last_command'];
     }
 }

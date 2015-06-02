@@ -13,7 +13,7 @@ Axel PHP comes with an optional FIFO download manager with the ability to set nu
 
 ** _PLEASE NOTE_: This library is under active development and is subject to change at any time. **
 
-## Example Usage
+## Example Usages
 
 ### Sync Download With Complete Callback
 
@@ -118,12 +118,13 @@ Want to contribute? Great! Feel free to get in touch with me and we can collabor
 
 ### TODO
 
--- Add to packagist
--- Document
--- Possible log options / write to log file?
--- Intelligently deal with both concurrent connections and concurrent downloads
--- Check write permissions in download directory
--- Pause queue (Maybe subclass?)
+  - Add to packagist
+  - Document
+  - Possible log options / write to log file?
+  - Intelligently deal with both concurrent connections and concurrent downloads
+  - Check write permissions in download directory
+  - Pause queue (Maybe subclass?)
+  - Test queue Async
 
 ---
 ## License

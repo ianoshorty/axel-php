@@ -19,14 +19,27 @@ namespace Axel;
 
 class AxelDownloadManagerSyncQueue implements AxelDownloadManagerQueueInterface {
 
+    /**
+     * @var AxelDownloadManager A reference to the created AxelDownloadManager to callback to when download has finished
+     */
     private $axelDownloadManager;
 
+    /**
+     * Stores a reference to the created AxelDownloadManager to callback to when download has finished
+     *
+     * @param AxelDownloadManager $axelDownloadManager
+     */
     public function setDownloadManager(AxelDownloadManager $axelDownloadManager) {
         $this->axelDownloadManager = $axelDownloadManager;
     }
 
-    public function addDownloadToQueue(AxelDownload $download) {
 
+    /**
+     * Processes a download immediately and then notifies the handler it has been completed
+     *
+     * @param AxelDownload $download
+     */
+    public function addDownloadToQueue(AxelDownload $download) {
         $download->start();
         $this->axelDownloadManager->notifyCompletedDownload($download);
     }
