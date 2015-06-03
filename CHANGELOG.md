@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.10: June 2nd, 2015
+- Lowered Symfony Process dependency version requirement - allows Laravel 5.0 to use package
+
 ### 0.0.9: June 2nd, 2015
 - Refactored AxelDownload and added serialization
 
