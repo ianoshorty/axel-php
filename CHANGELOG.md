@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.9: June 2nd, 2015
+- Refactored AxelDownload and added serialization
+
 ### 0.0.8: June 2nd, 2015
 - AxelDownload now extends AxelCore. Refactored Process interaction into AxelCore
 
