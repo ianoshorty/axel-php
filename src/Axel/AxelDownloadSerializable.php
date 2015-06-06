@@ -21,6 +21,8 @@ use SuperClosure\Serializer;
 
 trait AxelDownloadSerializable {
 
+    protected $_serializedClosures = [];
+
     /**
      * Specify data which should be serialized to JSON
      * @link http://php.net/manual/en/jsonserializable.jsonserialize.php
@@ -69,18 +71,29 @@ trait AxelDownloadSerializable {
         });
 
         array_walk($array['callbacks'], function($closure, $key) {
-            $this->callbacks[] = (new Serializer)->unserialize($closure);
+
+            if (empty($this->_serializedClosures[$key])) {
+
+                $this->callbacks[$key] = (new Serializer)->unserialize($closure);
+                $this->_serializedClosures[$key] = $closure;
+            }
         });
     }
 
+    /**
+     * Serializes closures that have not been previously serialized.
+     *
+     * @return array Serialized closures
+     */
     protected function serializeClosures() {
 
-        $serialized_closures = [];
+        foreach ((array)$this->callbacks as $key=>$closure) {
 
-        foreach ((array)$this->callbacks as $closure) {
-            $serialized_closures[] = (new Serializer)->serialize($closure);
+            if (empty($this->_serializedClosures[$key])) {
+                $this->_serializedClosures[$key] = (new Serializer)->serialize($closure);
+            }
         }
 
-        return $serialized_closures;
+        return $this->_serializedClosures;
     }
 }
