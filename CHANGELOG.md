@@ -1,6 +1,10 @@
 ### HEAD
 -
 
+### 0.0.11: June 2nd, 2015
+- Allows closures attached to AxelDownloads to be serialised
+- Fixes an issue with serialisation
+
 ### 0.0.10: June 2nd, 2015
 - Lowered Symfony Process dependency version requirement - allows Laravel 5.0 to use package
 
