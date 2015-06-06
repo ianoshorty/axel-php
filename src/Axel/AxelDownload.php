@@ -291,14 +291,23 @@ class AxelDownload extends AxelCore implements \JsonSerializable, \Serializable 
 
         $this->checkDownloadFile();
 
-        return $this->getStatus();
+        return $this->status;
     }
 
     /**
-     * @return array Last progress status
+     * Call to remove all attached callbacks
+     *
+     * @return array $this
      */
-    public function getStatus() {
-        return $this->status;
+    public function clearCallbacks() {
+
+        // This allows closures to be cleared // re-added
+        $this->_serializedClosures = [];
+
+        // Clear main list of closures
+        $this->callbacks = [];
+
+        return $this;
     }
 
     /**
