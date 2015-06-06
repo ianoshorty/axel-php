@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.13: June 2nd, 2015
+- Added a fix for reserializing closures
+
 ### 0.0.12: June 2nd, 2015
 - Altered position of status update, due to callbacks firing with incorrect complete status
 
