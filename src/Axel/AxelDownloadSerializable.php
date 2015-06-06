@@ -17,6 +17,8 @@
 
 namespace Axel;
 
+use SuperClosure\Serializer;
+
 trait AxelDownloadSerializable {
 
     /**
@@ -46,7 +48,10 @@ trait AxelDownloadSerializable {
      * @return string the string representation of the object or null
      */
     public function serialize() {
-        return $this->jsonSerialize();
+        return json_encode([
+            'core'      => $this->jsonSerialize(),
+            'callbacks' => $this->serializeClosures()
+        ]);
     }
 
     /**
@@ -59,8 +64,23 @@ trait AxelDownloadSerializable {
 
         $array = json_decode($serialized, true);
 
-        array_walk($array, function($value, $key) {
+        array_walk($array['core'], function($value, $key) {
             $this->$key = $value;
         });
+
+        array_walk($array['callbacks'], function($closure, $key) {
+            $this->callbacks[] = (new Serializer)->unserialize($closure);
+        });
+    }
+
+    protected function serializeClosures() {
+
+        $serialized_closures = [];
+
+        foreach ((array)$this->callbacks as $closure) {
+            $serialized_closures[] = (new Serializer)->serialize($closure);
+        }
+
+        return $serialized_closures;
     }
 }
