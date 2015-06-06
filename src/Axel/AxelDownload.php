@@ -257,6 +257,10 @@ class AxelDownload extends AxelCore implements \JsonSerializable, \Serializable 
         }
         else {
 
+            if ($this->last_command == self::STARTED) {
+                $this->last_command = AxelDownload::COMPLETED;
+            }
+
             if ($this->detach) $this->runCallbacks(true);
 
             return true;
@@ -285,9 +289,7 @@ class AxelDownload extends AxelCore implements \JsonSerializable, \Serializable 
      */
     public function updateStatus() {
 
-        if ($this->checkDownloadFile() === true) {
-            $this->last_command = AxelDownload::COMPLETED;
-        }
+        $this->checkDownloadFile();
 
         return $this->getStatus();
     }
