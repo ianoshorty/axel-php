@@ -1,6 +1,9 @@
 ### HEAD
 -
 
+### 0.0.12: June 2nd, 2015
+- Altered position of status update, due to callbacks firing with incorrect complete status
+
 ### 0.0.11: June 2nd, 2015
 - Allows closures attached to AxelDownloads to be serialised
 - Fixes an issue with serialisation

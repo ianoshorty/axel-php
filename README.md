@@ -79,7 +79,7 @@ $dm->processQueue();
 ```
 
 ### Version
-0.0.11
+0.0.12
 
 ---
 
